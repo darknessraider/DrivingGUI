@@ -1,0 +1,5 @@
+SCALE = 0.5
+
+X, Y = 3510 * SCALE, 1610 * SCALE
+
+

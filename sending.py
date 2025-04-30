@@ -10,6 +10,20 @@ class Pose2D:
 
     def copy(self):
         return Pose2D(self.x, self.y, self.theta)
+    
+    def add(self, pose):
+        if pose.__class__ is not self.__class__:
+            raise ValueError("must give another pose to addition expression")
+
+        return Pose2D(self.x + pose.x, self.y + pose.y, self.theta + pose.theta)
+    
+    def set_to_pose(self, pose):
+        if pose.__class__ is not self.__class__:
+            raise ValueError("must give another pose to addition expression")
+        
+        self.x = pose.x
+        self.y = pose.y
+        self.theta = pose.theta
 
 
 class CommunicablePose2D:
@@ -22,6 +36,7 @@ class CommunicablePose2D:
         self.x_entry: nt.NetworkTableEntry = self.table.getEntry(entry_name + "_x")
         self.y_entry: nt.NetworkTableEntry = self.table.getEntry(entry_name + "_y")
         self.theta_entry: nt.NetworkTableEntry = self.table.getEntry(entry_name + "_theta")
+        self.set_pose(pose)
 
     
     def set_pose(self, pose: Pose2D):
@@ -31,11 +46,3 @@ class CommunicablePose2D:
         self.y_entry.setDouble(self.pose.y)
         self.theta_entry.setDouble(self.pose.theta)
 
-
-class Robot:
-    def __init__(self): 
-        self.pose = Pose2D()
-
-    def set_pose(self, pose: Pose2D):
-        self.pose = pose
-        return self
