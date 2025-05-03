@@ -16,7 +16,11 @@ class Robot:
         self.network_pose = network_pose
         self.rendering_pose = rendering_pose
 
-test = rendering.RenderablePose(sending.Pose2D(144, 144, 0), (255, 0, 0))
+    def set_pose_with_pixels(self, x, y):
+        self.rendering_pose.set_pose_with_pixels(x, y)
+        self.network_pose.set_pose(self.rendering_pose.pose)
+
+robot = Robot(sending.CommunicablePose2D(sending.Pose2D(), "TargetPose"), rendering.RenderablePose(sending.Pose2D(), (255, 0, 0)))
 
 running = True 
 while running:
@@ -26,14 +30,11 @@ while running:
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             x, y = event.pos
-            test.set_pose_with_pixels(x, y)
-            
-
-
-    test.pose = test.pose.add(sending.Pose2D(theta=0.25))
-
+            robot.set_pose_with_pixels(x, y)
+    
+    print(robot.network_pose.pose)
     screen.blit(field_image, (0,0))
-    test.draw(screen)
+    robot.rendering_pose.draw(screen)
     screen.fill((0,0,0))
 
     

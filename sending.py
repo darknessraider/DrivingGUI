@@ -19,11 +19,14 @@ class Pose2D:
     
     def set_to_pose(self, pose):
         if pose.__class__ is not self.__class__:
-            raise ValueError("must give another pose to addition expression")
+            raise ValueError("must give another pose to set expression")
         
         self.x = pose.x
         self.y = pose.y
         self.theta = pose.theta
+
+    def __str__(self) -> str:
+        return f"x: {self.x}, y: {self.y}, theta: {self.theta}" 
 
 
 class CommunicablePose2D:
