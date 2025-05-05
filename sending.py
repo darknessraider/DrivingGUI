@@ -1,5 +1,6 @@
 from networktables import NetworkTables
 import networktables as nt
+import constants
 
 class Pose2D:
     def __init__(self, x: float=0, y: float=0, theta: float=0):
@@ -29,9 +30,9 @@ class Pose2D:
         return f"x: {self.x}, y: {self.y}, theta: {self.theta}" 
 
 
-class CommunicablePose2D:
+class SendablePose2D:
     NetworkTables.initialize(server="localhost")
-    table = nt.NetworkTables.getTable("DrivingGUI")
+    table = nt.NetworkTables.getTable(constants.NETWORK_TABLE_NAME)
 
     def __init__(self, pose: Pose2D, entry_name: str):
         self.pose = pose  
@@ -48,4 +49,16 @@ class CommunicablePose2D:
         self.x_entry.setDouble(self.pose.x)
         self.y_entry.setDouble(self.pose.y)
         self.theta_entry.setDouble(self.pose.theta)
+
+class SendableBoolean:
+    table = nt.NetworkTables.getTable(constants.NETWORK_TABLE_NAME)
+
+    def __init__(self, value: bool, entry_name: str):
+        self.value = value
+        self.entry: nt.NetworkTableEntry = self.table.getEntry(entry_name)
+        self.set_value(value)
+    
+    def set_value(self, value: bool):
+        self.value = value
+        self.entry.setBoolean(value)
 

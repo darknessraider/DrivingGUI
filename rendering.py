@@ -28,7 +28,6 @@ class RenderablePose:
 
 
     def set_pose_with_pixels(self, x, y):
-        print(x,y)
         self.pose.x = x * (1/INCHES_TO_PIXELS)
         self.pose.y = FIELD_DIMENSIONS_INCHES[1] - (y * (1/INCHES_TO_PIXELS))
 
