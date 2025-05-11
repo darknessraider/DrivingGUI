@@ -24,9 +24,9 @@ mode_toggle_boolean: sending.SendableBoolean = sending.SendableBoolean(False, "G
 def on_click_mode_toggle_button(button, event):
     mode_toggle_boolean.set_value(button.parent.value)
 
-mode_toggle_button: user_interface.ToggleButton = user_interface.ToggleButton(0, 0, (0, 255, 0), (255, 0, 0), on_click_mode_toggle_button) 
+mode_toggle_button: user_interface.ToggleButton = user_interface.ToggleButton(0, 0, (0, 255, 0), (255, 0, 0), "Mouse", "Joysticks", on_click_mode_toggle_button)
 
-connected_indicator = user_interface.BooleanIndicator(0, 1, (0, 255, 0), (255, 0, 0))
+connected_indicator = user_interface.BooleanIndicator(0, 1, (0, 255, 0), (255, 0, 0), "Connected", "Disconnected")
 
 def connection_listener(connected, info):
     connected_indicator.value = connected

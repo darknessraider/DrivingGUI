@@ -23,10 +23,12 @@ class StandardMenuButton:
 
     def draw(self, screen: pygame.Surface):
         pygame.draw.rect(screen, self.color, self.rect)
+        if self.parent:
+            self.parent.draw(screen)
 
 
 class ToggleButton:
-    def __init__(self, row: int, column: int, true_color: tuple, false_color: tuple, on_click:Callable=(lambda event, self: None), default_value: bool=False):
+    def __init__(self, row: int, column: int, true_color: tuple, false_color: tuple, true_text: str, false_text: str, on_click:Callable=(lambda event, self: None), default_value: bool=False):
         self.value: bool = default_value
 
         def toggle_on_click(button, event):
@@ -39,11 +41,19 @@ class ToggleButton:
             toggle_on_click(button, event)
             self.button.color = true_color if self.value else false_color
 
+        self.true_text = true_text
+        self.false_text = false_text
         self.button.on_click = toggle_color_on_click
+        self.font = pygame.font.SysFont(None, 36)
+
+
+    def draw(self, screen: pygame.Surface):
+        text = self.font.render(self.true_text if self.value else self.false_text, True, (255, 255, 255))
+        screen.blit(text, self.button.rect)
 
 
 class BooleanIndicator:
-    def __init__(self, row: int, column: int, true_color: tuple, false_color: tuple):
+    def __init__(self, row: int, column: int, true_color: tuple, false_color: tuple, true_text: str, false_text: str):
         self.value: bool = False
 
         if row > constants.MENU_HEIGHT / constants.STANDARD_BUTTON_HEIGTH:
@@ -58,12 +68,16 @@ class BooleanIndicator:
 
         self.true_color = true_color
         self.false_color = false_color
+        self.true_text = true_text
+        self.false_text = false_text
+        self.font = pygame.font.SysFont(None, 30)
 
         UserInterfaceUpdater().register_indicator(self)
 
     def draw(self, screen: pygame.Surface):
         pygame.draw.rect(screen, self.true_color if self.value else self.false_color, self.rect)
-
+        text = self.font.render(self.true_text if self.value else self.false_text, True, (255, 255, 255))
+        screen.blit(text, self.rect)
 
 class UserInterfaceUpdater:
     def __new__(cls):
