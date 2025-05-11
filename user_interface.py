@@ -56,10 +56,10 @@ class BooleanIndicator:
     def __init__(self, row: int, column: int, true_color: tuple, false_color: tuple, true_text: str, false_text: str):
         self.value: bool = False
 
-        if row > constants.MENU_HEIGHT / constants.STANDARD_BUTTON_HEIGTH:
+        if row > (constants.MENU_HEIGHT / constants.STANDARD_BUTTON_HEIGTH) - 1:
             raise Exception(f"There is only room for {int(constants.MENU_HEIGHT / constants.STANDARD_BUTTON_HEIGTH)} row(s)")
 
-        if column > constants.X / constants.STANDARD_BUTTON_WIDTH:
+        if column > (constants.X / constants.STANDARD_BUTTON_WIDTH) - 1:
             raise Exception(f"There is only room for {int(constants.X / constants.STANDARD_BUTTON_WIDTH)} columns(s)")
 
         self.X = column * constants.STANDARD_BUTTON_WIDTH
