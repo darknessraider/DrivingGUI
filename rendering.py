@@ -37,7 +37,6 @@ class RenderablePose:
         rotated_rectangle = pygame.transform.rotate(self.rectangle, self.pose.theta)
         rect_rect = rotated_rectangle.get_rect(center=(x, y)) 
         screen.blit(rotated_rectangle, rect_rect.topleft)
-        pygame.display.flip()
 
 
     def set_pose_with_pixels(self, x, y):

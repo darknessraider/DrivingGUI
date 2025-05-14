@@ -3,6 +3,7 @@ import sending
 import rendering
 import constants
 import user_interface
+import receiving
 from networktables import NetworkTables
 
 sending.NetworkTableWrapper()
@@ -51,6 +52,9 @@ class Robot:
 
 
 robot = Robot(sending.SendablePose2D(sending.Pose2D(17.5, 17.5, 0), "TargetPose"), rendering.RenderablePose(sending.Pose2D(17.5, 17.5, 0), (255, 0, 0)))
+currentPose = receiving.ReceivablePose2D("current_pose")
+currentRenderPose = rendering.RenderablePose(currentPose.get_pose(), (0, 255, 0))
+
 user_interface_updater = user_interface.UserInterfaceUpdater()
 
 running = True 
@@ -69,10 +73,14 @@ while running:
         if event.type == pygame.MOUSEWHEEL:
             robot.set_rotation(robot.rendering_pose.pose.theta + event.y * 90)
 
+    currentRenderPose.pose = currentPose.get_pose()
+
     user_interface_updater.periodic(screen)
-    screen.blit(field_image, (0,0))
+    screen.blit(field_image, (0, 0))
     pygame.draw.rect(screen, (80, 80, 80), menu_border_rect)
+    currentRenderPose.draw(screen)
     robot.rendering_pose.draw(screen)
+    pygame.display.flip()
     screen.fill((30,30,30))
 
 
