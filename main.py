@@ -45,6 +45,10 @@ class Robot:
         self.rendering_pose.set_pose_with_pixels(x, y)
         self.network_pose.set_pose(self.rendering_pose.pose)
 
+    def set_rotation(self, theta):
+        self.rendering_pose.pose.theta = theta
+        self.network_pose.set_pose(self.rendering_pose.pose)
+
 
 robot = Robot(sending.SendablePose2D(sending.Pose2D(17.5, 17.5, 0), "TargetPose"), rendering.RenderablePose(sending.Pose2D(17.5, 17.5, 0), (255, 0, 0)))
 user_interface_updater = user_interface.UserInterfaceUpdater()
@@ -62,6 +66,8 @@ while running:
             if event.button == 1:
                 user_interface_updater.on_click_event(event)
 
+        if event.type == pygame.MOUSEWHEEL:
+            robot.set_rotation(robot.rendering_pose.pose.theta + event.y * 90)
 
     user_interface_updater.periodic(screen)
     screen.blit(field_image, (0,0))
