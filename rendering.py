@@ -6,11 +6,18 @@ import math
 ROBOT_FRAME_DIMENSIONS_INCHES = (35, 35)
 FIELD_DIMENSIONS_INCHES = (690, 317)
 INCHES_TO_PIXELS = constants.X / FIELD_DIMENSIONS_INCHES[0]
+BORDER_THICKNESS = 5
 
 class RenderablePose:
-    def __init__(self, pose: sending.Pose2D, color: tuple):
+    def __init__(self, pose: sending.Pose2D, color: tuple, hollow: bool=False):
         self.arrow_image = pygame.image.load("images/arrow.png").convert_alpha()
+        px_array = pygame.PixelArray(self.arrow_image)
+        px_array.replace((0,0,0), (255, 255, 255))
+        del px_array
+
         #self.arrow_image = pygame.transform.rotate(self.arrow_image, 90)
+
+        self.hollow = hollow
 
         arrow_width = self.arrow_image.get_width() // 10
         arrow_height = self.arrow_image.get_height() // 10
@@ -28,7 +35,10 @@ class RenderablePose:
     def draw(self, screen: pygame.Surface):
         x = self.pose.x * INCHES_TO_PIXELS
         y = constants.Y - (self.pose.y * INCHES_TO_PIXELS)
-        self.rectangle.fill(self.color)
+        if self.hollow:
+            pygame.draw.rect(self.rectangle, self.color, self.rectangle.get_rect(), width=10)
+        else:
+            self.rectangle.fill(self.color)
 
         arrow_rect = self.arrow_image.get_rect(center=(self.rectangle.get_width() // 2,
                                                        self.rectangle.get_height() // 2))
