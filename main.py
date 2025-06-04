@@ -5,6 +5,7 @@ import constants
 import user_interface
 import receiving
 import setpoints
+import obstacle_detection
 from networktables import NetworkTables
 
 sending.NetworkTableWrapper()
@@ -28,6 +29,8 @@ def on_click_mode_toggle_button(button, event):
 
 mode_toggle_button: user_interface.ToggleButton = user_interface.ToggleButton(0, 0, (0, 255, 0), (255, 0, 0), "Mouse", "Joysticks", on_click_mode_toggle_button)
 
+safe_mode_button: user_interface.ToggleButton = user_interface.ToggleButton(1, 0, true_text="safe", false_text="unsafe", default_value=True)
+
 connected_indicator = user_interface.BooleanIndicator(0, 1, (0, 255, 0), (255, 0, 0), "Connected", "Disconnected")
 
 def connection_listener(connected, info):
@@ -44,11 +47,24 @@ class Robot:
         self.rendering_pose = rendering_pose
 
     def set_pose_with_pixels(self, x, y):
+        original_pose = self.rendering_pose.pose.copy()
+
         self.rendering_pose.set_pose_with_pixels(x, y)
+
+        if obstacle_detection.check_collides(self.rendering_pose.pose) and safe_mode_button.value:
+            self.rendering_pose.pose = original_pose
+
         self.network_pose.set_pose(self.rendering_pose.pose)
 
+
     def set_rotation(self, theta):
+        original_pose = self.rendering_pose.pose.copy()
+
         self.rendering_pose.pose.theta = theta
+
+        if obstacle_detection.check_collides(self.rendering_pose.pose) and safe_mode_button.value:
+            self.rendering_pose.pose = original_pose
+
         self.network_pose.set_pose(self.rendering_pose.pose)
 
 
@@ -70,17 +86,20 @@ while running:
         if event.type == pygame.MOUSEBUTTONDOWN:
             if (event.button == 3):
                 x, y = event.pos
+
                 targetRobotState.set_pose_with_pixels(x, y)
+
             if event.button == 1:
                 user_interface_updater.on_click_event(event)
                 clicked_set_point = setpoints.SetPointUpdater.get_clicked_setpoint(event.pos)
+
                 if clicked_set_point != None:
                     targetRobotState.network_pose.set_pose(clicked_set_point.render_pose.pose.copy())
                     targetRobotState.rendering_pose.pose = clicked_set_point.render_pose.pose.copy()
 
 
         if event.type == pygame.MOUSEWHEEL:
-            targetRobotState.set_rotation(targetRobotState.rendering_pose.pose.theta + event.y * 90)
+            targetRobotState.set_rotation(targetRobotState.rendering_pose.pose.theta + event.y * 10)
 
     currentRenderPose.pose = currentPose.get_pose()
 

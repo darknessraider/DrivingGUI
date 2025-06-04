@@ -28,7 +28,14 @@ class StandardMenuButton:
 
 
 class ToggleButton:
-    def __init__(self, row: int, column: int, true_color: tuple, false_color: tuple, true_text: str, false_text: str, on_click:Callable=(lambda event, self: None), default_value: bool=False):
+    def __init__(self, row: int,
+                       column: int,
+                       true_color: tuple = (0,255,0),
+                       false_color: tuple = (255,0,0),
+                       true_text: str = "on",
+                       false_text: str = "off",
+                       on_click:Callable = (lambda event, self: None), 
+                       default_value: bool=False):
         self.value: bool = default_value
 
         def toggle_on_click(button, event):
@@ -78,6 +85,7 @@ class BooleanIndicator:
         pygame.draw.rect(screen, self.true_color if self.value else self.false_color, self.rect)
         text = self.font.render(self.true_text if self.value else self.false_text, True, (255, 255, 255))
         screen.blit(text, self.rect)
+
 
 class UserInterfaceUpdater:
     def __new__(cls):
