@@ -6,6 +6,7 @@ import user_interface
 import receiving
 import setpoints
 import obstacle_detection
+import datetime
 from networktables import NetworkTables
 
 sending.NetworkTableWrapper()
@@ -31,6 +32,8 @@ mode_toggle_button: user_interface.ToggleButton = user_interface.ToggleButton(0,
 
 safe_mode_button: user_interface.ToggleButton = user_interface.ToggleButton(1, 0, true_text="safe", false_text="unsafe", default_value=True)
 
+unsafe_move_popup: user_interface.PopUp = user_interface.PopUp("cannot move there", datetime.timedelta(seconds=0.5))
+
 connected_indicator = user_interface.BooleanIndicator(0, 1, (0, 255, 0), (255, 0, 0), "Connected", "Disconnected")
 
 def connection_listener(connected, info):
@@ -52,6 +55,7 @@ class Robot:
         self.rendering_pose.set_pose_with_pixels(x, y)
 
         if obstacle_detection.check_collides(self.rendering_pose.pose) and safe_mode_button.value:
+            unsafe_move_popup.activate()
             self.rendering_pose.pose = original_pose
 
         self.network_pose.set_pose(self.rendering_pose.pose)
@@ -63,6 +67,7 @@ class Robot:
         self.rendering_pose.pose.theta = theta
 
         if obstacle_detection.check_collides(self.rendering_pose.pose) and safe_mode_button.value:
+            unsafe_move_popup.activate()
             self.rendering_pose.pose = original_pose
 
         self.network_pose.set_pose(self.rendering_pose.pose)

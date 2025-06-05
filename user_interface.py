@@ -3,6 +3,7 @@ from typing import Callable
 import constants
 import pygame
 import sending
+import datetime
 
 class StandardMenuButton:
     def __init__(self, row: int, column: int, color: tuple, on_click:Callable=(lambda event, self: None), parent=None):
@@ -86,6 +87,31 @@ class BooleanIndicator:
         text = self.font.render(self.true_text if self.value else self.false_text, True, (255, 255, 255))
         screen.blit(text, self.rect)
 
+class PopUp:
+    def __init__(self, text: str, duration: datetime.timedelta):
+        self.active = False
+        self.duration = duration
+
+        font = pygame.font.SysFont(None, 72)
+        self.text = font.render(text, True, (255,255,255))
+        self.text_rect = self.text.get_rect(center=(constants.X // 2, constants.Y // 2))
+
+        UserInterfaceUpdater().register_popup(self)
+
+    def activate(self):
+        self.active = True
+        self.start_time = datetime.datetime.now()
+
+    def draw(self, screen: pygame.Surface):
+        if not self.active:
+            return 
+
+        if datetime.datetime.now() - self.start_time > self.duration:
+            self.active = False
+            return 
+
+        screen.blit(self.text, self.text_rect)
+
 
 class UserInterfaceUpdater:
     def __new__(cls):
@@ -105,11 +131,18 @@ class UserInterfaceUpdater:
             self.indicators: list = []
         self.indicators.append(indicator)
 
+    def register_popup(self, pop_up: PopUp):
+        if not hasattr(self, 'pop_ups'):
+            self.pop_ups: list = []
+        self.pop_ups.append(pop_up)
+
     def periodic(self, screen):
         for button in self.buttons:
             button.draw(screen)
         for indicator in self.indicators:
             indicator.draw(screen)
+        for pop_up in self.pop_ups:
+            pop_up.draw(screen)
 
     def on_click_event(self, event):
         for button in self.buttons:
