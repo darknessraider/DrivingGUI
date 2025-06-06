@@ -6,7 +6,13 @@ import sending
 import datetime
 
 class StandardMenuButton:
-    def __init__(self, row: int, column: int, color: tuple, on_click:Callable=(lambda event, self: None), parent=None):
+    def __init__(self, row: int, 
+                       column: int, 
+                       color: tuple = (255,255,255), 
+                       text: str = "",
+                       on_click:Callable=(lambda event, self: None), 
+                       parent=None):
+
         if row > constants.MENU_HEIGHT / constants.STANDARD_BUTTON_HEIGTH:
             raise Exception(f"There is only room for {int(constants.MENU_HEIGHT / constants.STANDARD_BUTTON_HEIGTH)} row(s)")
 
@@ -19,6 +25,10 @@ class StandardMenuButton:
         self.on_click = on_click
         self.color = color
         self.parent = parent
+
+        self.font = pygame.font.SysFont(None, 36)
+        if not parent: self.text = self.font.render(text, True, (255, 255, 255))
+
         UserInterfaceUpdater().register_button(self)
 
 
@@ -26,6 +36,9 @@ class StandardMenuButton:
         pygame.draw.rect(screen, self.color, self.rect)
         if self.parent:
             self.parent.draw(screen)
+            return
+
+        screen.blit(self.text, self.rect)
 
 
 class ToggleButton:
@@ -43,7 +56,11 @@ class ToggleButton:
             self.value = not self.value
             on_click(button, event)
 
-        self.button: StandardMenuButton = StandardMenuButton(row, column, true_color if self.value else false_color, toggle_on_click, self)
+        self.button: StandardMenuButton = StandardMenuButton(row, 
+                                                             column, 
+                                                             color=true_color if self.value else false_color, 
+                                                             on_click=toggle_on_click, 
+                                                             parent=self)
 
         def toggle_color_on_click(button, event):
             toggle_on_click(button, event)

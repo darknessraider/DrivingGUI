@@ -73,8 +73,26 @@ class SendableBoolean:
         self.value = value
         self.entry: nt.NetworkTableEntry = table.getEntry(entry_name)
         self.set_value(value)
-    
+
     def set_value(self, value: bool):
         self.value = value
         self.entry.setBoolean(value)
+
+
+class NamedCommand:
+    table = NetworkTableWrapper().table
+    command_to_run: nt.NetworkTableEntry = table.getEntry("command_to_run")
+
+    # I don't really know what to call this
+    # When you flip this boolean whatever command is in command_to_run get's run
+    command_activator: nt.NetworkTableEntry = table.getEntry("command_activator")
+
+    def __init__(self, name: str):
+        self.name = name
+
+
+    def run(self):
+        self.command_to_run.setString(self.name)
+        print(self.command_to_run.getString(""))
+        self.command_activator.setBoolean(not self.command_activator.getBoolean(False))
 

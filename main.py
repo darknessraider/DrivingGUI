@@ -28,13 +28,20 @@ mode_toggle_boolean: sending.SendableBoolean = sending.SendableBoolean(False, "G
 def on_click_mode_toggle_button(button, event):
     mode_toggle_boolean.set_value(button.parent.value)
 
-mode_toggle_button: user_interface.ToggleButton = user_interface.ToggleButton(0, 0, (0, 255, 0), (255, 0, 0), "Mouse", "Joysticks", on_click_mode_toggle_button)
+mode_toggle_button = user_interface.ToggleButton(0, 0, (0, 255, 0), (255, 0, 0), "Mouse", "Joysticks", on_click_mode_toggle_button)
 
-safe_mode_button: user_interface.ToggleButton = user_interface.ToggleButton(1, 0, true_text="safe", false_text="unsafe", default_value=True)
+safe_mode_button = user_interface.ToggleButton(1, 0, true_text="safe", false_text="unsafe", default_value=True)
 
-unsafe_move_popup: user_interface.PopUp = user_interface.PopUp("cannot move there", datetime.timedelta(seconds=0.5))
+unsafe_move_popup = user_interface.PopUp("cannot move there", datetime.timedelta(seconds=0.5))
 
 connected_indicator = user_interface.BooleanIndicator(0, 1, (0, 255, 0), (255, 0, 0), "Connected", "Disconnected")
+
+raise_elevator_command = sending.NamedCommand("PrepareLevel4")
+
+def raise_elevator_on_click(button, event):
+    raise_elevator_command.run()
+
+raise_elevator = user_interface.StandardMenuButton(0, 2, color=(0, 0, 255), text="Raise Elevator", on_click=raise_elevator_on_click)
 
 def connection_listener(connected, info):
     connected_indicator.value = connected
